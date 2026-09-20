@@ -1,0 +1,618 @@
+/* ==========================================================================
+   Vifee Sidebar — Ultra-Light, Minimalist Review Drawer
+   ========================================================================== */
+
+.vifee-sidebar {
+	position: fixed;
+	z-index: 2147483600;
+	top: 0;
+	right: 0;
+	width: min(420px, 100vw);
+	height: 100dvh;
+	display: flex;
+	flex-direction: column;
+	overflow: hidden;
+	border-left: 1px solid var(--vifee-line-subtle);
+	background: #ffffff;
+	box-shadow: -12px 0 32px rgba(15, 16, 19, 0.08);
+	color: var(--vifee-ink-900);
+	animation: vifee-slide-left 200ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.vifee-sidebar[hidden] {
+	display: none;
+}
+
+@keyframes vifee-slide-left {
+	from {
+		transform: translateX(100%);
+	}
+	to {
+		transform: translateX(0);
+	}
+}
+
+.vifee-sidebar__header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	min-height: 56px;
+	padding: 12px 20px;
+	background: #ffffff;
+	border-bottom: 1px solid var(--vifee-line-subtle);
+}
+
+.vifee-sidebar__brand {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	font-size: 16px;
+	font-weight: 700;
+	color: var(--vifee-ink-900);
+}
+
+.vifee-sidebar__brand-dot {
+	width: 8px;
+	height: 8px;
+	border-radius: 50%;
+	background: var(--vifee-brand);
+}
+
+.vifee-sidebar__count {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-width: 20px;
+	height: 20px;
+	padding: 0 8px;
+	margin-left: 8px;
+	border-radius: var(--vifee-radius-round);
+	background: var(--vifee-surface-100);
+	color: var(--vifee-ink-600);
+	font-size: 12px;
+	font-weight: 600;
+}
+
+/* Minimalist Segmented Scope Switcher */
+.vifee-sidebar__scope {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 4px;
+	padding: 8px 16px;
+	background: #ffffff;
+	border-bottom: 1px solid var(--vifee-line-subtle);
+}
+
+.vifee-sidebar__scope button {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	min-height: 32px;
+	padding: 4px 12px;
+	border: 0;
+	border-radius: var(--vifee-radius-sm);
+	background: transparent;
+	color: var(--vifee-ink-600);
+	cursor: pointer;
+	font: inherit;
+	font-size: 12px;
+	font-weight: 500;
+	transition: all 120ms ease;
+}
+
+.vifee-sidebar__scope button:hover {
+	color: var(--vifee-ink-900);
+	background: var(--vifee-surface-100);
+}
+
+.vifee-sidebar__scope button[aria-pressed="true"] {
+	background: var(--vifee-surface-100);
+	color: var(--vifee-ink-900);
+	font-weight: 600;
+}
+
+/* Collapsible filters keep the comment list dominant. */
+.vifee-sidebar__filter-bar {
+	display: flex;
+	justify-content: flex-end;
+	gap: 6px;
+	padding: 8px 16px;
+	border-bottom: 1px solid var(--vifee-line-subtle);
+	background: #ffffff;
+}
+
+.vifee-sidebar__filter-toggle {
+	display: inline-flex;
+	min-height: 32px;
+	align-items: center;
+	gap: 6px;
+	padding: 4px 10px;
+	border: 1px solid var(--vifee-line-medium);
+	border-radius: var(--vifee-radius-sm);
+	background: #ffffff;
+	color: var(--vifee-ink-700);
+	font: inherit;
+	font-size: 12px;
+	font-weight: 600;
+	cursor: pointer;
+}
+
+.vifee-sidebar__filter-toggle:hover,
+.vifee-sidebar__filter-toggle[aria-expanded="true"] {
+	border-color: var(--vifee-line-strong);
+	background: var(--vifee-surface-100);
+	color: var(--vifee-ink-900);
+}
+
+.vifee-sidebar__filter-toggle:focus-visible,
+.vifee-sidebar__add:focus-visible {
+	outline: 2px solid var(--vifee-color-focus);
+	outline-offset: 2px;
+}
+
+.vifee-sidebar__filter-count {
+	display: grid;
+	min-width: 20px;
+	height: 20px;
+	padding: 0 5px;
+	place-items: center;
+	border-radius: var(--vifee-radius-round);
+	background: var(--vifee-brand);
+	color: #ffffff;
+	font-size: 11px;
+}
+
+.vifee-sidebar__filters {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 8px;
+	padding: 8px 16px 12px;
+	background: #ffffff;
+	border-bottom: 1px solid var(--vifee-line-subtle);
+}
+
+.vifee-sidebar__filters label {
+	display: grid;
+	gap: 3px;
+	color: var(--vifee-ink-600);
+	font-size: 12px;
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
+}
+
+.vifee-sidebar__filters select {
+	width: 100%;
+	min-height: 28px;
+	padding: 2px 20px 2px 8px;
+	border: 1px solid var(--vifee-line-medium);
+	border-radius: var(--vifee-radius-sm);
+	background: #ffffff;
+	color: var(--vifee-ink-800);
+	font: inherit;
+	font-size: 12px;
+	font-weight: 500;
+	cursor: pointer;
+	transition: all 120ms ease;
+}
+
+.vifee-sidebar__filters select:focus {
+	background: #ffffff;
+	border-color: var(--vifee-brand);
+	outline: 0;
+}
+
+.vifee-sidebar__clear-filters {
+	min-height: 32px;
+	padding: 4px 8px;
+	border: 0;
+	border-radius: var(--vifee-radius-xs);
+	background: transparent;
+	color: var(--vifee-brand-active);
+	font: inherit;
+	font-size: 12px;
+	font-weight: 600;
+	cursor: pointer;
+}
+
+.vifee-sidebar__clear-filters:hover {
+	background: var(--vifee-brand-light);
+}
+
+.vifee-sidebar__clear-filters:focus-visible {
+	outline: 2px solid var(--vifee-color-focus);
+	outline-offset: 2px;
+}
+
+.vifee-sidebar__content {
+	flex: 1 1 auto;
+	min-height: 0;
+	overflow-y: auto;
+	padding: 12px 10px;
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	background: #f5f5f5;
+}
+
+/* ==========================================================================
+   Feedback Card (Light & Airy)
+   ========================================================================== */
+.vifee-feedback-card {
+	position: relative;
+	border: 1px solid var(--vifee-line-subtle);
+	border-radius: var(--vifee-radius-md);
+	background: #ffffff;
+	box-shadow: none;
+	transition: all 140ms ease;
+	/* Deliberately not overflow:hidden — that would clip the action menu's
+	   dropdown panel, which pops outside the card's own bounds. The two
+	   children that actually need rounded corners (the accent bar and the
+	   expanded details panel) round themselves instead, below. */
+}
+
+.vifee-feedback-card:hover {
+	border-color: var(--vifee-line-medium);
+}
+
+.vifee-feedback-card.is-expanded {
+	border-color: var(--vifee-brand-border);
+	box-shadow: var(--vifee-shadow-sm);
+}
+
+.vifee-feedback-card::before {
+	position: absolute;
+	/* Inset past the card's own corner radius rather than relying on
+	   overflow:hidden to clip a flush top:0/bottom:0 bar to the rounded
+	   shape — the card no longer clips its children (see .vifee-feedback-card). */
+	top: var(--vifee-radius-md);
+	bottom: var(--vifee-radius-md);
+	left: 0;
+	width: 3px;
+	content: "";
+	background: transparent;
+	transition: background 140ms ease;
+}
+
+.vifee-feedback-card.is-expanded::before {
+	background: var(--vifee-brand);
+}
+
+.vifee-feedback-card__summary {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr);
+	gap: 8px;
+	padding: 12px 14px;
+	align-items: center;
+	cursor: pointer;
+}
+
+.vifee-feedback-card__heading {
+	display: grid;
+	grid-template-columns: auto minmax(0, 1fr) auto;
+	gap: 8px;
+	align-items: center;
+}
+
+.vifee-feedback-card__identity {
+	display: flex;
+	min-width: 0;
+	gap: 4px;
+	align-items: center;
+	overflow: hidden;
+	color: var(--vifee-ink-500);
+}
+
+.vifee-feedback-card__identity strong {
+	overflow: hidden;
+	font-size: 12px;
+	font-weight: 550;
+	color: var(--vifee-ink-600);
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.vifee-feedback-card__identity small,
+.vifee-feedback-card__url {
+	color: var(--vifee-ink-600);
+	font-size: 12px;
+}
+
+.vifee-feedback-card__actions,
+.vifee-feedback-card__tags {
+	display: flex;
+	align-items: center;
+	gap: 4px;
+}
+
+.vifee-feedback-card__actions .vifee-icon-button {
+	width: 28px;
+	height: 28px;
+}
+
+.vifee-feedback-card__content,
+.vifee-feedback-card__edit,
+.vifee-feedback-card__url,
+.vifee-feedback-card__footer,
+.vifee-feedback-card__tags,
+.vifee-feedback-card .vifee-attachment-gallery,
+.vifee-feedback-card .vifee-form-error {
+	grid-column: 1 / -1;
+}
+
+.vifee-feedback-card__content {
+	margin: 2px 0 4px;
+	padding: 6px 0;
+}
+
+.vifee-feedback-card__content p {
+	margin: 0;
+	font-size: 14px;
+	line-height: 1.5;
+	overflow-wrap: anywhere;
+}
+
+.vifee-feedback-card__url {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	padding: 2px 8px;
+	border-radius: var(--vifee-radius-xs);
+	background: var(--vifee-surface-100);
+}
+
+.vifee-feedback-card__edit textarea {
+	width: 100%;
+	min-height: 72px;
+	padding: 8px 12px;
+	resize: vertical;
+	border: 1px solid var(--vifee-brand);
+	border-radius: var(--vifee-radius-sm);
+	font: inherit;
+	font-size: 14px;
+	box-shadow: 0 0 0 2px var(--vifee-brand-glow);
+}
+
+.vifee-feedback-card__edit > div {
+	display: flex;
+	justify-content: flex-end;
+	gap: 4px;
+	margin-top: 4px;
+}
+
+.vifee-feedback-card__edit > .vifee-feedback-card__edit-workflow {
+	justify-content: flex-start;
+	gap: 8px;
+	margin-top: 8px;
+}
+
+.vifee-feedback-card__edit-workflow .vifee-workflow-select {
+	flex: 1 1 auto;
+}
+
+.vifee-feedback-card__footer {
+	display: grid;
+	grid-template-columns: auto 1fr;
+	gap: 8px;
+	align-items: center;
+	padding-top: 8px;
+	border-top: 1px solid var(--vifee-line-subtle);
+	margin-top: 4px;
+}
+
+.vifee-feedback-card__toggle {
+	display: inline-flex;
+	gap: 4px;
+	align-items: center;
+	justify-self: start;
+	padding: 3px 8px;
+	border: 0;
+	border-radius: var(--vifee-radius-round);
+	background: var(--vifee-surface-100);
+	color: var(--vifee-ink-600);
+	cursor: pointer;
+	font: inherit;
+	font-size: 12px;
+	font-weight: 500;
+	transition: all 120ms ease;
+}
+
+.vifee-feedback-card__toggle .vifee-arr {
+	display: block;
+}
+
+.vifee-feedback-card__toggle:hover {
+	background: var(--vifee-surface-200);
+	color: var(--vifee-ink-900);
+}
+
+.vifee-feedback-card__toggle .vifee-icon {
+	width: 12px;
+	height: 12px;
+}
+
+.vifee-feedback-card__number {
+	color: var(--vifee-ink-700);
+	font-size: 12px;
+	font-weight: 700;
+}
+
+.vifee-feedback-card__details {
+	padding: 0 16px 16px;
+	background: #ffffff;
+	border-top: 1px solid var(--vifee-line-subtle);
+	/* The card no longer clips its children to its rounded shape, so the
+	   panel — flush against the card's bottom edge when expanded — rounds
+	   its own bottom corners to match instead. */
+	border-radius: 0 0 var(--vifee-radius-md) var(--vifee-radius-md);
+}
+
+/* Minimalist Priority Badges */
+.vifee-priority-badge {
+	align-self: start;
+	padding: 1px 6px;
+	border-radius: var(--vifee-radius-round);
+	font-size: 12px;
+	font-weight: 550;
+	letter-spacing: 0.02em;
+}
+
+.vifee-priority-badge.is-urgent {
+	background: var(--vifee-priority-urgent-bg);
+	color: var(--vifee-priority-urgent-text);
+}
+
+.vifee-priority-badge.is-high {
+	background: var(--vifee-priority-high-bg);
+	color: var(--vifee-priority-high-text);
+}
+
+.vifee-priority-badge.is-normal {
+	background: var(--vifee-priority-normal-bg);
+	color: var(--vifee-priority-normal-text);
+}
+
+.vifee-priority-badge.is-low {
+	background: var(--vifee-priority-low-bg);
+	color: var(--vifee-priority-low-text);
+}
+
+/* Minimalist Issue Type Badges */
+.vifee-issue-type-badge {
+	align-self: start;
+	padding: 1px 6px;
+	border-radius: var(--vifee-radius-round);
+	font-size: 12px;
+	font-weight: 550;
+	letter-spacing: 0.02em;
+}
+
+.vifee-issue-type-badge.is-bug {
+	background: var(--vifee-issue-type-bug-bg);
+	color: var(--vifee-issue-type-bug-text);
+}
+
+.vifee-issue-type-badge.is-task {
+	background: var(--vifee-issue-type-task-bg);
+	color: var(--vifee-issue-type-task-text);
+}
+
+.vifee-issue-type-badge.is-question {
+	background: var(--vifee-issue-type-question-bg);
+	color: var(--vifee-issue-type-question-text);
+}
+
+.vifee-issue-type-badge.is-idea {
+	background: var(--vifee-issue-type-idea-bg);
+	color: var(--vifee-issue-type-idea-text);
+}
+
+.vifee-sidebar__page-group {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+}
+
+.vifee-sidebar__page-group h3 {
+	margin: 12px 4px 8px;
+	overflow: hidden;
+	color: var(--vifee-ink-600);
+	font-size: 12px;
+	font-weight: 600;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.vifee-sidebar__empty {
+	padding: 36px 16px;
+	color: var(--vifee-ink-600);
+	text-align: center;
+	font-size: 12px;
+}
+
+.vifee-sidebar__empty p {
+	margin: 0;
+}
+
+.vifee-sidebar__footer {
+	padding: 12px 20px;
+	background: #ffffff;
+	border-top: 1px solid var(--vifee-line-subtle);
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 8px;
+}
+
+.vifee-sidebar__user {
+	display: flex;
+	min-width: 0;
+	gap: 8px;
+	align-items: center;
+}
+
+.vifee-avatar--sm {
+	width: 24px;
+	height: 24px;
+	font-size: 8px;
+}
+
+.vifee-sidebar__user-name {
+	overflow: hidden;
+	color: var(--vifee-ink-800);
+	font-size: 12px;
+	font-weight: 600;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.vifee-sidebar__add {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 7px;
+	min-height: 36px;
+	padding: 7px 14px;
+	border: 0;
+	background: var(--vifee-brand) !important;
+	color: #fff !important;
+	border-radius: var(--vifee-radius-md);
+	font: inherit;
+	font-size: 12px;
+	font-weight: 650;
+	cursor: pointer;
+	box-shadow: 0 2px 8px rgba(14, 165, 233, 0.3);
+	transition: all 140ms ease;
+}
+
+.vifee-sidebar__add-symbol {
+	font-size: 22px;
+	font-weight: 400;
+	line-height: 1;
+}
+
+.vifee-sidebar__add:hover {
+	transform: scale(1.06);
+	box-shadow: 0 4px 12px rgba(14, 165, 233, 0.45);
+}
+
+@media (max-width: 640px) {
+	.vifee-sidebar {
+		top: auto;
+		bottom: 0;
+		width: 100vw;
+		height: min(88dvh, 740px);
+		padding-bottom: env(safe-area-inset-bottom, 0px);
+		border-top: 1px solid var(--vifee-line-subtle);
+		border-left: 0;
+		border-radius: var(--vifee-radius-lg) var(--vifee-radius-lg) 0 0;
+	}
+
+	/* A collapsed card's last row is the footer; unlike an expanded card
+	   (which gets the details panel's own bottom padding after it), it has
+	   nothing following it, so it needs more bottom breathing room than the
+	   default 12px to avoid feeling clipped under the card's rounded corner. */
+	.vifee-feedback-card__summary {
+		padding-bottom: 16px;
+	}
+}

@@ -1,0 +1,112 @@
+// Source of truth for every --vifee-* design token consumed by the widget
+// (shadow DOM :host). The WordPress plugin (admin/src/styles/tokens/_tokens.scss)
+// keeps its own hand-maintained copy of this file — it is NOT generated or
+// synced from here anymore. When you change a value below, copy the same
+// change into the plugin's file so the two stay identical.
+@mixin vifee-tokens {
+	/* ==========================================================================
+	   Vifee Design Tokens — Ultra-Light, Minimalist & Modern SaaS
+	   Amber Orange (#FF8800) & Carbon Onyx (#202020)
+	   ========================================================================== */
+	--vifee-brand: #ff8800;
+	--vifee-brand-hover: #e67a00;
+	--vifee-brand-active: #cc6d00;
+	--vifee-brand-light: #fff3e6;
+	--vifee-brand-subtle: #fff3e6;
+	--vifee-brand-border: #ffd9b3;
+	--vifee-brand-glow: rgba(255, 136, 0, 0.18);
+
+	--vifee-ink-950: #0a0a0a;
+	--vifee-ink-900: #202020;
+	--vifee-ink-800: #303238;
+	--vifee-ink-700: #404040;
+	--vifee-ink-600: #686b70;
+	--vifee-ink-400: #a3a3a3;
+	--vifee-ink-300: #d4d4d4;
+
+	--vifee-surface-0: #ffffff;
+	--vifee-surface-translucent: rgba(255, 255, 255, 0.94);
+	--vifee-surface-50: #f8f9fb;
+	--vifee-surface-100: #f5f5f5;
+	--vifee-surface-200: #ebebeb;
+
+	--vifee-line-hairline: rgba(0, 0, 0, 0.05);
+	--vifee-line-subtle: #f0f0f0;
+	--vifee-line-medium: #e5e5e5;
+	--vifee-line-strong: #d4d4d4;
+
+	--vifee-color-ink: var(--vifee-ink-900);
+	--vifee-color-surface: var(--vifee-surface-0);
+	--vifee-color-accent: var(--vifee-brand);
+	--vifee-color-focus: #3b82f6;
+
+	/* Status Colors — Light, Airy Pastels */
+	--vifee-status-open-bg: #f0f6ff;
+	--vifee-status-open-text: #2563eb;
+	--vifee-status-open-border: #dbeafe;
+	--vifee-status-open-dot: #3b82f6;
+
+	--vifee-status-progress-bg: #fff5e6;
+	--vifee-status-progress-text: #b45309;
+	--vifee-status-progress-border: #fce3b6;
+	--vifee-status-progress-dot: #ff9d00;
+
+	--vifee-status-verification-bg: #f8f6ff;
+	--vifee-status-verification-text: #7c3aed;
+	--vifee-status-verification-border: #ede9fe;
+	--vifee-status-verification-dot: #8b5cf6;
+
+	--vifee-status-resolved-bg: #e6f7ec;
+	--vifee-status-resolved-text: #00a63e;
+	--vifee-status-resolved-border: #cdeed9;
+	--vifee-status-resolved-dot: #00a63e;
+
+	--vifee-status-archived-bg: #f5f5f5;
+	--vifee-status-archived-text: #737373;
+	--vifee-status-archived-border: #e5e5e5;
+	--vifee-status-archived-dot: #a3a3a3;
+
+	/* Priority Colors */
+	--vifee-priority-urgent-bg: #fef2f2;
+	--vifee-priority-urgent-text: #dc2626;
+	--vifee-priority-urgent-dot: #ef4444;
+
+	--vifee-priority-high-bg: #fff7ed;
+	--vifee-priority-high-text: #ea580c;
+	--vifee-priority-high-dot: #f97316;
+
+	--vifee-priority-normal-bg: #f0f9ff;
+	--vifee-priority-normal-text: #0284c7;
+	--vifee-priority-normal-dot: #0ea5e9;
+
+	--vifee-priority-low-bg: #f5f5f5;
+	--vifee-priority-low-text: #737373;
+	--vifee-priority-low-dot: #a3a3a3;
+
+	/* Issue Type Colors */
+	--vifee-issue-type-bug-bg: #fef2f2;
+	--vifee-issue-type-bug-text: #dc2626;
+
+	--vifee-issue-type-task-bg: #f0f9ff;
+	--vifee-issue-type-task-text: #0284c7;
+
+	--vifee-issue-type-question-bg: #f5f3ff;
+	--vifee-issue-type-question-text: #7c3aed;
+
+	--vifee-issue-type-idea-bg: #fefce8;
+	--vifee-issue-type-idea-text: #a16207;
+
+	/* Multi-stop Diffusion Shadows (Linear / macOS feel) */
+	--vifee-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04);
+	--vifee-shadow-md: 0 2px 8px -1px rgba(0, 0, 0, 0.05), 0 8px 16px -3px rgba(0, 0, 0, 0.04);
+	--vifee-shadow-floating: 0 8px 24px -4px rgba(15, 16, 19, 0.08), 0 16px 40px -8px rgba(15, 16, 19, 0.12), 0 0 0 1px rgba(0, 0, 0, 0.04);
+	--vifee-shadow-popover: 0 12px 32px -8px rgba(15, 16, 19, 0.12), 0 20px 48px -12px rgba(15, 16, 19, 0.14), 0 0 0 1px rgba(0, 0, 0, 0.05);
+	--vifee-shadow-launcher: 0 4px 16px -2px rgba(255, 136, 0, 0.32), 0 8px 24px -4px rgba(15, 16, 19, 0.15), 0 0 0 1px rgba(0, 0, 0, 0.06);
+
+	--vifee-radius-xs: 4px;
+	--vifee-radius-sm: 8px;
+	--vifee-radius-md: 8px;
+	--vifee-radius-lg: 12px;
+	--vifee-radius-xl: 16px;
+	--vifee-radius-round: 9999px;
+}

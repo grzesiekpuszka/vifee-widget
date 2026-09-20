@@ -1,0 +1,1111 @@
+@use "./tokens" as *;
+@use "../features/sidebar/sidebar";
+@use "../features/comments/discussion";
+@use "../features/annotations/annotation-editor";
+
+:host {
+	@include vifee-tokens;
+
+	all: initial;
+	display: contents;
+	color: var(--vifee-color-ink);
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, -apple-system, "SF Pro Text", Helvetica, Arial, sans-serif;
+	font-size: 14px;
+	line-height: 1.5;
+	letter-spacing: -0.01em;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}
+
+*,
+*::before,
+*::after {
+	box-sizing: border-box;
+}
+
+/* ==========================================================================
+   Minimalist Floating Launcher (FAB)
+   ========================================================================== */
+.vifee-launcher {
+	all: unset;
+	position: fixed;
+	z-index: 2147483599;
+	right: 24px;
+	display: grid;
+	cursor: pointer;
+	place-items: center;
+	border-radius: var(--vifee-radius-round);
+	background: transparent;
+	box-shadow: var(--vifee-shadow-launcher);
+	transition: transform 180ms cubic-bezier(0.16, 1, 0.3, 1), box-shadow 180ms ease, background 140ms ease;
+	user-select: none;
+}
+
+.vifee-launcher[hidden],
+.vifee-pin-toggle[hidden] {
+	display: none;
+}
+
+.vifee-launcher:hover {
+	transform: translateY(-2px) scale(1.05);
+}
+
+.vifee-launcher:active {
+	transform: translateY(0) scale(0.96);
+}
+
+.vifee-launcher:focus-visible {
+	outline: 2px solid var(--vifee-brand);
+	outline-offset: 3px;
+}
+
+.vifee-launcher__icon {
+	display: block;
+	transition: transform 160ms ease;
+}
+
+.vifee-launcher:hover .vifee-launcher__icon,
+.vifee-launcher:hover .vifee-launcher__symbol {
+	transform: scale(1.06);
+}
+
+.vifee-launcher__symbol {
+	display: block;
+	font-size: 32px;
+	font-weight: 400;
+	line-height: 1;
+	transition: transform 160ms ease;
+}
+
+.vifee-launcher__count {
+	position: absolute;
+	top: -3px;
+	right: -3px;
+	display: grid;
+	min-width: 20px;
+	height: 20px;
+	padding: 0 4px;
+	place-items: center;
+	border: 2px solid var(--vifee-surface-0);
+	border-radius: var(--vifee-radius-round);
+	background: var(--vifee-brand);
+	color: #fff;
+	font-size: 10px;
+	font-weight: 750;
+	line-height: 1;
+	box-shadow: 0 1px 4px rgba(0, 0, 0, 0.18);
+	animation: vifee-badge-pop 200ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Bottom-most, most prominent: starts a new pin. */
+.vifee-launcher--add {
+	bottom: 24px;
+	width: 48px !important;
+	height: 48px !important;
+	background: var(--vifee-brand) !important;
+	color: #ffffff;
+}
+
+.vifee-launcher--add:hover {
+	box-shadow: 0 8px 20px -2px rgba(14, 165, 233, 0.45), 0 12px 32px -4px rgba(15, 16, 19, 0.22);
+}
+
+/* Middle: opens the feedback list. A secondary white button keeps the branded
+   add action as the single most prominent control in the stack. */
+.vifee-launcher--sidebar {
+	right: 24px;
+	bottom: 80px;
+	width: 40px !important;
+	height: 40px !important;
+	background: #ffffff !important;
+	border: 1px solid var(--vifee-line-subtle);
+	color: var(--vifee-brand);
+}
+
+/* Top: shows/hides the pins already on the page. */
+.vifee-pin-toggle {
+	position: fixed;
+	z-index: 2147483599;
+	right: 24px;
+	bottom: 130px;
+	width: 40px !important;
+	height: 40px !important;
+	border-radius: var(--vifee-radius-round);
+	background: #ffffff !important;
+	border: 1px solid var(--vifee-line-subtle);
+	box-shadow: var(--vifee-shadow-launcher);
+	border-radius: var(--vifee-radius-round) !important;
+}
+
+.vifee-pin-toggle svg {
+	width: 20px;
+	height: 20px;
+}
+
+.vifee-pin-toggle[aria-pressed="true"] {
+	background: var(--vifee-brand-light) !important;
+	color: var(--vifee-brand);
+}
+
+@keyframes vifee-badge-pop {
+	0% {
+		transform: scale(0.3);
+		opacity: 0;
+	}
+	100% {
+		transform: scale(1);
+		opacity: 1;
+	}
+}
+
+@media (max-width: 640px) {
+	.vifee-launcher--add {
+		right: 16px;
+		bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+		width: 48px !important;
+		height: 48px !important;
+	}
+	.vifee-launcher--sidebar {
+		right: 16px;
+		bottom: calc(72px + env(safe-area-inset-bottom, 0px));
+		width: 40px !important;
+		height: 40px !important;
+	}
+	.vifee-pin-toggle {
+		right: 16px;
+		bottom: calc(124px + env(safe-area-inset-bottom, 0px));
+	}
+}
+
+/* ==========================================================================
+   Refined Pins on Page
+   ========================================================================== */
+.vifee-pin-layer {
+	position: fixed;
+	z-index: 2147483590;
+	inset: 0;
+	pointer-events: none;
+}
+
+.vifee-pin {
+	all: unset;
+	position: fixed;
+	width: 32px;
+	height: 32px;
+	transform: translate(-50%, -50%);
+	pointer-events: auto;
+	cursor: pointer;
+	border-radius: var(--vifee-radius-round);
+	filter: drop-shadow(0 4px 12px rgba(18, 19, 22, 0.2));
+	transition: transform 150ms cubic-bezier(0.16, 1, 0.3, 1), filter 150ms ease;
+	user-select: none;
+}
+
+.vifee-pin svg {
+	display: block;
+	width: 100%;
+	height: 100%;
+	border-radius: 50%;
+}
+
+.vifee-pin ellipse {
+	transition: fill 150ms ease;
+}
+
+/* Priority Backgrounds for Pins */
+.vifee-pin.is-priority-urgent ellipse {
+	fill: #ef4444;
+}
+
+.vifee-pin.is-priority-high ellipse {
+	fill: #f97316;
+}
+
+.vifee-pin.is-priority-normal ellipse {
+	fill: #0ea5e9;
+}
+
+.vifee-pin.is-priority-low ellipse {
+	fill: #94a3b8;
+}
+
+.vifee-pin:hover,
+.vifee-pin.is-active {
+	transform: translate(-50%, -50%) scale(1.2);
+	filter: drop-shadow(0 8px 16px rgba(14, 165, 233, 0.45));
+	z-index: 10;
+}
+
+.vifee-pin.is-priority-urgent:hover,
+.vifee-pin.is-priority-urgent.is-active {
+	filter: drop-shadow(0 8px 16px rgba(239, 68, 68, 0.5));
+}
+
+.vifee-pin.is-priority-high:hover,
+.vifee-pin.is-priority-high.is-active {
+	filter: drop-shadow(0 8px 16px rgba(249, 115, 22, 0.5));
+}
+
+.vifee-pin.is-priority-normal:hover,
+.vifee-pin.is-priority-normal.is-active {
+	filter: drop-shadow(0 8px 16px rgba(14, 165, 233, 0.5));
+}
+
+.vifee-pin.is-priority-low:hover,
+.vifee-pin.is-priority-low.is-active {
+	filter: drop-shadow(0 8px 16px rgba(148, 163, 184, 0.45));
+}
+
+.vifee-pin.is-pending {
+	opacity: 0.7;
+	animation: vifee-pulse 900ms cubic-bezier(0.4, 0, 0.6, 1) infinite alternate;
+}
+
+@keyframes vifee-pulse {
+	to {
+		opacity: 0.3;
+		transform: translate(-50%, -50%) scale(0.92);
+	}
+}
+
+/* ==========================================================================
+   Minimalist Picker Mode (Target element)
+   ========================================================================== */
+.vifee-picker {
+	position: fixed;
+	z-index: 2147483595;
+	inset: 0;
+	cursor: crosshair;
+	pointer-events: auto;
+	background: rgba(15, 16, 19, 0.08);
+	backdrop-filter: blur(1px);
+}
+
+.vifee-picker__highlight {
+	position: fixed;
+	border: 1.5px solid var(--vifee-brand);
+	background: rgba(14, 165, 233, 0.08);
+	border-radius: var(--vifee-radius-xs);
+	box-shadow: 0 0 0 2px rgba(14, 165, 233, 0.2);
+	pointer-events: none;
+	transition: all 60ms ease-out;
+}
+
+.vifee-picker__hint {
+	position: fixed;
+	top: 20px;
+	left: 50%;
+	display: flex;
+	gap: 12px;
+	align-items: center;
+	padding: 8px 16px;
+	transform: translateX(-50%);
+	pointer-events: auto;
+	border-radius: var(--vifee-radius-round);
+	background: rgba(27, 29, 34, 0.92);
+	backdrop-filter: blur(12px);
+	color: #ffffff;
+	font-size: 12px;
+	font-weight: 550;
+	box-shadow: 0 8px 24px rgba(0, 0, 0, 0.16);
+	border: 1px solid rgba(255, 255, 255, 0.1);
+	animation: vifee-slide-down 160ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes vifee-slide-down {
+	from {
+		transform: translate(-50%, -8px);
+		opacity: 0;
+	}
+	to {
+		transform: translate(-50%, 0);
+		opacity: 1;
+	}
+}
+
+.vifee-picker__hint button {
+	all: unset;
+	display: flex;
+	align-items: center;
+	padding: 3px 8px;
+	border-radius: var(--vifee-radius-round);
+	background: rgba(255, 255, 255, 0.12);
+	color: #ffffff;
+	cursor: pointer;
+	font-size: 12px;
+	font-weight: 600;
+	transition: background 120ms ease;
+}
+
+.vifee-picker__hint button:hover {
+	background: rgba(255, 255, 255, 0.22);
+}
+
+.vifee-picker__hint kbd {
+	display: inline-block;
+	padding: 1px 4px;
+	border-radius: 4px;
+	background: rgba(255, 255, 255, 0.16);
+	font-family: inherit;
+	font-size: 12px;
+	font-weight: 650;
+}
+
+/* ==========================================================================
+   Comment Form (Light Glassmorphic Composer)
+   ========================================================================== */
+.vifee-comment-form {
+	position: fixed;
+	z-index: 2147483599;
+	right: 80px;
+	bottom: 24px;
+	width: min(392px, calc(100vw - 32px));
+	padding: 16px 20px;
+	border-radius: var(--vifee-radius-lg);
+	background: var(--vifee-surface-translucent);
+	backdrop-filter: blur(16px) saturate(180%);
+	border: 1px solid var(--vifee-line-subtle);
+	box-shadow: var(--vifee-shadow-popover);
+	color: var(--vifee-ink-900);
+	animation: vifee-pop-in 180ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* The desktop 80px right offset leaves room for the launcher stack beside it;
+   at this width that same offset pushed the form's left edge past the
+   viewport (width already shrinks via `calc(100vw - 32px)`, but `right`
+   never did), clipping it off-screen. Placed after the base rule (not in the
+   earlier @media block) so equal-specificity cascade order lets it win. */
+@media (max-width: 640px) {
+	.vifee-comment-form {
+		right: 16px;
+		bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+		max-height: calc(100dvh - 32px - env(safe-area-inset-bottom, 0px));
+		overflow-y: auto;
+	}
+}
+
+@keyframes vifee-pop-in {
+	from {
+		transform: scale(0.96) translateY(8px);
+		opacity: 0;
+	}
+	to {
+		transform: scale(1) translateY(0);
+		opacity: 1;
+	}
+}
+
+.vifee-comment-form__header {
+	display: flex;
+	gap: 12px;
+	align-items: center;
+	justify-content: space-between;
+	padding-bottom: 12px;
+	border-bottom: 1px solid var(--vifee-line-subtle);
+}
+
+.vifee-comment-form__title {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	font-weight: 650;
+	font-size: 12px;
+	color: var(--vifee-ink-900);
+}
+
+.vifee-comment-form__title svg {
+	color: var(--vifee-brand);
+	width: 16px;
+	height: 16px;
+}
+
+/* ==========================================================================
+   WYSIWYG Composer (contenteditable) & Toolbar
+   ========================================================================== */
+.vifee-composer-toolbar {
+	display: flex;
+	gap: 2px;
+	margin-top: 12px;
+	padding: 3px;
+	border: 1px solid var(--vifee-line-subtle);
+	border-radius: var(--vifee-radius-sm);
+	background: var(--vifee-surface-50);
+}
+
+.vifee-composer-toolbar__button {
+	display: grid;
+	width: 26px;
+	height: 26px;
+	padding: 0;
+	place-items: center;
+	border: 0;
+	border-radius: var(--vifee-radius-xs);
+	background: transparent;
+	color: var(--vifee-ink-600);
+	cursor: pointer;
+	transition: background 120ms ease, color 120ms ease;
+}
+
+.vifee-composer-toolbar__button:hover {
+	background: var(--vifee-surface-200);
+	color: var(--vifee-ink-900);
+}
+
+.vifee-composer-toolbar__button:active {
+	background: var(--vifee-brand-subtle);
+	color: var(--vifee-brand-active);
+}
+
+.vifee-composer-toolbar__button:focus-visible {
+	outline: 2px solid var(--vifee-color-focus);
+	outline-offset: 1px;
+}
+
+.vifee-composer-toolbar__button svg {
+	display: block;
+	width: 14px;
+	height: 14px;
+}
+
+.vifee-composer-toolbar__glyph {
+	font-size: 13px;
+	line-height: 1;
+}
+
+.vifee-composer-toolbar__glyph--bold {
+	font-weight: 750;
+}
+
+.vifee-composer-toolbar__glyph--italic {
+	font-style: italic;
+}
+
+.vifee-composer {
+	width: 100%;
+	min-height: 84px;
+	margin: 8px 0;
+	padding: 12px;
+	overflow-y: auto;
+	border: 1px solid var(--vifee-line-medium);
+	border-radius: var(--vifee-radius-md);
+	background: var(--vifee-surface-0);
+	color: var(--vifee-ink-900);
+	font: inherit;
+	font-size: 12px;
+	line-height: 1.55;
+	overflow-wrap: anywhere;
+	cursor: text;
+	transition: border-color 140ms ease, box-shadow 140ms ease, background 140ms ease;
+}
+
+.vifee-composer:focus {
+	background: var(--vifee-surface-0);
+	border-color: var(--vifee-brand);
+	outline: 0;
+	box-shadow: 0 0 0 4px var(--vifee-brand-glow);
+}
+
+.vifee-composer:empty::before {
+	color: var(--vifee-ink-400);
+	content: attr(data-placeholder);
+	pointer-events: none;
+}
+
+.vifee-composer :is(p, div) {
+	margin: 0 0 4px;
+}
+
+.vifee-composer :is(p, div):last-child {
+	margin-bottom: 0;
+}
+
+.vifee-composer ul,
+.vifee-composer ol {
+	margin: 4px 0;
+	padding-left: 18px;
+}
+
+.vifee-composer li {
+	margin: 2px 0;
+}
+
+.vifee-composer code {
+	padding: 1px 4px;
+	border-radius: var(--vifee-radius-xs);
+	background: var(--vifee-surface-200);
+	font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+	font-size: 11px;
+}
+
+.vifee-composer a {
+	color: var(--vifee-brand);
+	text-underline-offset: 2px;
+}
+
+/* ==========================================================================
+   Rendered Markdown Content
+   ========================================================================== */
+.vifee-md {
+	color: var(--vifee-ink-900);
+	font-size: 14px;
+	line-height: 1.5;
+	overflow-wrap: anywhere;
+}
+
+.vifee-md p {
+	margin: 0 0 6px;
+}
+
+.vifee-md p:last-child {
+	margin-bottom: 0;
+}
+
+.vifee-md ul,
+.vifee-md ol {
+	margin: 4px 0;
+	padding-left: 18px;
+}
+
+.vifee-md li {
+	margin: 2px 0;
+}
+
+.vifee-md code {
+	padding: 1px 4px;
+	border-radius: var(--vifee-radius-xs);
+	background: var(--vifee-surface-200);
+	font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+	font-size: 11px;
+}
+
+.vifee-md pre {
+	margin: 6px 0;
+	padding: 8px 10px;
+	overflow-x: auto;
+	border-radius: var(--vifee-radius-xs);
+	background: var(--vifee-surface-100);
+}
+
+.vifee-md pre code {
+	padding: 0;
+	background: none;
+	font-size: 11px;
+}
+
+.vifee-md a {
+	color: var(--vifee-brand);
+	text-decoration: underline;
+	text-underline-offset: 2px;
+}
+
+.vifee-comment-form__footer {
+	display: flex;
+	gap: 12px;
+	align-items: center;
+	justify-content: space-between;
+	margin-top: 12px;
+	padding-top: 12px;
+	border-top: 1px solid var(--vifee-line-subtle);
+}
+
+.vifee-comment-form label {
+	display: flex;
+	gap: 8px;
+	align-items: center;
+	font-size: 12px;
+	font-weight: 550;
+	color: var(--vifee-ink-600);
+}
+
+.vifee-comment-form select {
+	min-height: 32px;
+	padding: 3px 20px 3px 8px;
+	border: 1px solid var(--vifee-line-subtle);
+	border-radius: var(--vifee-radius-sm);
+	background: var(--vifee-surface-0);
+	color: var(--vifee-ink-800);
+	font: inherit;
+	font-size: 12px;
+	font-weight: 550;
+	cursor: pointer;
+	transition: border-color 140ms ease;
+}
+
+.vifee-comment-form select:focus {
+	border-color: var(--vifee-brand);
+	outline: 0;
+}
+
+.vifee-form-hint {
+	margin: 8px 0 0;
+	color: var(--vifee-ink-600);
+	font-size: 12px;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 8px;
+}
+
+.vifee-form-hint span {
+	display: flex;
+	align-items: center;
+	gap: 4px;
+}
+
+.vifee-form-error {
+	margin: 8px 0 0;
+	padding: 8px 12px;
+	border-radius: var(--vifee-radius-sm);
+	background: #fef2f2;
+	border: 1px solid #fee2e2;
+	color: #dc2626;
+	font-size: 12px;
+	font-weight: 550;
+}
+
+/* ==========================================================================
+   Buttons & Clean Icon Buttons
+   ========================================================================== */
+.vifee-button,
+.vifee-icon-button {
+	font: inherit;
+	cursor: pointer;
+	border: 0;
+	transition: all 130ms ease;
+}
+
+.vifee-button {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
+	min-height: 36px;
+	padding: 8px 16px;
+	border: 1px solid var(--vifee-line-subtle);
+	border-radius: var(--vifee-radius-md);
+	background: var(--vifee-surface-0);
+	color: var(--vifee-ink-800);
+	font-size: 12px;
+	font-weight: 600;
+	user-select: none;
+}
+
+.vifee-button:hover {
+	background: var(--vifee-surface-100);
+	color: var(--vifee-ink-950);
+}
+
+.vifee-button--primary {
+	border-color: transparent;
+	background: var(--vifee-brand);
+	color: #fff;
+	font-weight: 650;
+	box-shadow: 0 1px 4px rgba(14, 165, 233, 0.28);
+}
+
+.vifee-button--primary:hover {
+	background: var(--vifee-brand-hover);
+	color: #fff;
+	box-shadow: 0 3px 8px rgba(14, 165, 233, 0.38);
+}
+
+.vifee-button:focus-visible,
+.vifee-icon-button:focus-visible {
+	outline: 2px solid var(--vifee-color-focus);
+	outline-offset: 2px;
+}
+
+.vifee-button:disabled,
+.vifee-icon-button:disabled {
+	cursor: not-allowed;
+	opacity: 0.45;
+	box-shadow: none;
+}
+
+.vifee-icon-button {
+	display: grid;
+	width: 32px;
+	height: 32px;
+	padding: 0;
+	place-items: center;
+	border-radius: var(--vifee-radius-sm);
+	background: transparent;
+	color: var(--vifee-ink-600);
+}
+
+.vifee-icon-button:hover {
+	background: var(--vifee-surface-100);
+	color: var(--vifee-ink-900);
+}
+
+/* ==========================================================================
+   Screenshot & Attachment Toolbar
+   ========================================================================== */
+.vifee-screenshot-control {
+	display: grid;
+	gap: 8px;
+	margin: 8px 0;
+}
+
+.vifee-screenshot-control__sources {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 4px;
+}
+
+.vifee-screenshot-control__sources .vifee-button {
+	min-height: 28px;
+	padding: 3px 8px;
+	font-size: 12px;
+	font-weight: 550;
+	border-radius: var(--vifee-radius-sm);
+	background: var(--vifee-surface-100);
+}
+
+.vifee-screenshot-control__sources .vifee-button:hover {
+	background: var(--vifee-surface-200);
+}
+
+/* Full-mode capture actions: square icon buttons. */
+.vifee-capture-button {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 34px;
+	height: 34px;
+	padding: 0;
+	border: 1px solid var(--vifee-line-medium);
+	border-radius: 9px;
+	background: var(--vifee-surface-0);
+	color: var(--vifee-ink-700);
+	font: inherit;
+	cursor: pointer;
+	box-shadow: var(--vifee-shadow-sm);
+	transition: all 130ms ease;
+}
+
+.vifee-capture-button:hover {
+	background: var(--vifee-surface-100);
+	color: var(--vifee-ink-900);
+}
+
+.vifee-capture-button:focus-visible {
+	outline: 2px solid var(--vifee-color-focus);
+	outline-offset: 2px;
+}
+
+.vifee-capture-button:disabled {
+	cursor: not-allowed;
+	opacity: 0.45;
+	box-shadow: none;
+}
+
+.vifee-capture-button svg {
+	display: block;
+}
+
+.vifee-screenshot-control__sources label {
+	position: relative;
+	display: inline-flex;
+}
+
+.vifee-screenshot-control__sources input[type="file"] {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	overflow: hidden;
+	clip: rect(0 0 0 0);
+}
+
+.vifee-screenshot-control ul {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+	margin: 4px 0 0;
+	padding: 0;
+	list-style: none;
+}
+
+.vifee-screenshot-control li {
+	position: relative;
+	width: 68px;
+	height: 48px;
+}
+
+.vifee-screenshot-control img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	border: 1px solid var(--vifee-line-subtle);
+	border-radius: var(--vifee-radius-xs);
+	box-shadow: var(--vifee-shadow-sm);
+}
+
+.vifee-screenshot-control li button {
+	position: absolute;
+	top: -4px;
+	right: -4px;
+	display: grid;
+	width: 20px;
+	height: 20px;
+	padding: 0;
+	place-items: center;
+	cursor: pointer;
+	border: 1px solid var(--vifee-line-medium);
+	border-radius: 50%;
+	background: #ffffff;
+	color: var(--vifee-ink-700);
+	box-shadow: var(--vifee-shadow-sm);
+	transition: all 120ms ease;
+}
+
+.vifee-screenshot-control li button:hover {
+	background: #fef2f2;
+	color: #dc2626;
+	border-color: #fecaca;
+}
+
+/* ==========================================================================
+   Region Selector Tool
+   ========================================================================== */
+.vifee-region-selector {
+	position: fixed;
+	z-index: 2147483645;
+	inset: 0;
+	overflow: hidden;
+	cursor: crosshair;
+	background: rgba(15, 16, 19, 0.7);
+}
+
+.vifee-region-selector > img {
+	width: 100%;
+	height: 100%;
+	pointer-events: none;
+}
+
+.vifee-region-selector__selection {
+	position: fixed;
+	border: 1.5px solid var(--vifee-brand);
+	background: rgba(14, 165, 233, 0.12);
+	box-shadow: 0 0 0 9999px rgba(15, 16, 19, 0.6);
+	pointer-events: none;
+}
+
+.vifee-region-selector__hint,
+.vifee-region-selector__actions {
+	position: fixed;
+	z-index: 1;
+	left: 50%;
+	transform: translateX(-50%);
+}
+
+.vifee-region-selector__hint {
+	bottom: 20px;
+	padding: 8px 16px;
+	border-radius: var(--vifee-radius-round);
+	background: rgba(27, 29, 34, 0.9);
+	backdrop-filter: blur(8px);
+	color: #ffffff;
+	font-size: 12px;
+	font-weight: 550;
+	box-shadow: var(--vifee-shadow-floating);
+}
+
+.vifee-region-selector__actions {
+	display: flex;
+	gap: 8px;
+	bottom: 64px;
+}
+
+/* ==========================================================================
+   Attachment Gallery
+   ========================================================================== */
+.vifee-attachment-gallery {
+	display: grid;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	gap: 8px;
+	margin: 8px 0 0;
+	padding: 0;
+	list-style: none;
+}
+
+.vifee-attachment-gallery img {
+	display: block;
+	width: 100%;
+	aspect-ratio: 16 / 10;
+	object-fit: cover;
+	border: 1px solid var(--vifee-line-subtle);
+	border-radius: var(--vifee-radius-xs);
+	transition: transform 120ms ease;
+}
+
+.vifee-attachment-gallery__thumb {
+	display: block;
+	width: 100%;
+	padding: 0;
+	border: 0;
+	background: none;
+	cursor: zoom-in;
+}
+
+.vifee-attachment-gallery__thumb:hover img,
+.vifee-attachment-gallery__thumb:focus-visible img {
+	transform: scale(1.02);
+}
+
+.vifee-attachment-gallery span {
+	color: var(--vifee-ink-600);
+	font-size: 12px;
+}
+
+/* ==========================================================================
+   Attachment Lightbox
+   ========================================================================== */
+.vifee-lightbox {
+	position: fixed;
+	z-index: 2147483647;
+	inset: 0;
+	display: grid;
+	place-items: center;
+	padding: 24px;
+}
+
+.vifee-lightbox__backdrop {
+	position: absolute;
+	inset: 0;
+	background: rgba(15, 16, 19, 0.72);
+}
+
+.vifee-lightbox__frame {
+	position: relative;
+	z-index: 1;
+	max-width: min(90vw, 960px);
+	max-height: 90vh;
+	display: grid;
+}
+
+.vifee-lightbox__frame img {
+	display: block;
+	max-width: 100%;
+	max-height: 90vh;
+	border-radius: var(--vifee-radius-md);
+	box-shadow: var(--vifee-shadow-popover);
+	object-fit: contain;
+}
+
+.vifee-lightbox__actions {
+	position: absolute;
+	top: -16px;
+	right: -16px;
+	z-index: 2;
+	display: flex;
+	gap: 8px;
+}
+
+.vifee-lightbox__actions .vifee-icon-button {
+	background: #ffffff !important;
+	box-shadow: var(--vifee-shadow-sm);
+}
+
+/* ==========================================================================
+   Activation Modal (Reviewer Access)
+   ========================================================================== */
+.vifee-activation-backdrop {
+	position: fixed;
+	z-index: 2147483640;
+	inset: 0;
+	display: grid;
+	padding: 20px;
+	place-items: center;
+	background: rgba(15, 16, 19, 0.45);
+	backdrop-filter: blur(8px);
+}
+
+.vifee-activation {
+	display: grid;
+	width: min(400px, 100%);
+	gap: 16px;
+	padding: 24px;
+	border-radius: var(--vifee-radius-lg);
+	background: #ffffff;
+	border: 1px solid var(--vifee-line-subtle);
+	box-shadow: var(--vifee-shadow-popover);
+	animation: vifee-pop-in 180ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.vifee-activation__header {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+}
+
+.vifee-activation__icon {
+	display: grid;
+	flex-shrink: 0;
+	width: 40px;
+	height: 40px;
+	place-items: center;
+	border-radius: var(--vifee-radius-round);
+	background: var(--vifee-brand-light);
+	color: var(--vifee-brand-active);
+}
+
+.vifee-activation strong {
+	font-size: 16px;
+	font-weight: 700;
+	color: var(--vifee-ink-900);
+}
+
+.vifee-activation p {
+	margin: 0;
+	color: var(--vifee-ink-600);
+	font-size: 12px;
+}
+
+.vifee-activation label {
+	display: grid;
+	gap: 4px;
+	font-size: 12px;
+	font-weight: 600;
+	color: var(--vifee-ink-800);
+}
+
+.vifee-activation label span {
+	color: var(--vifee-ink-600);
+	font-weight: 400;
+}
+
+.vifee-activation input {
+	min-height: 40px;
+	padding: 8px 12px;
+	border: 1px solid var(--vifee-line-medium);
+	border-radius: var(--vifee-radius-md);
+	background: #ffffff;
+	color: var(--vifee-ink-900);
+	font: inherit;
+	font-size: 12px;
+	transition: all 120ms ease;
+}
+
+.vifee-activation input:focus {
+	background: #ffffff;
+	border-color: var(--vifee-brand);
+	outline: 0;
+	box-shadow: 0 0 0 4px var(--vifee-brand-glow);
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.vifee-launcher,
+	.vifee-launcher__count,
+	.vifee-pin,
+	.vifee-comment-form,
+	.vifee-activation,
+	.vifee-popover,
+	.vifee-sidebar,
+	.vifee-action-menu__panel,
+	.vifee-picker__hint,
+	.vifee-picker__highlight {
+		transition: none !important;
+		animation: none !important;
+	}
+}

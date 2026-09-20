@@ -1,0 +1,18 @@
+[
+  { "name": "bold", "html": "<p><strong>b</strong></p>", "md": "**b**" },
+  { "name": "bold via b alias", "html": "<p><b>B</b></p>", "md": "**B**" },
+  { "name": "italic", "html": "<p><em>i</em></p>", "md": "*i*" },
+  { "name": "italic via i alias", "html": "<p><i>I</i></p>", "md": "*I*" },
+  { "name": "inline code", "html": "<p><code>c</code></p>", "md": "`c`" },
+  { "name": "https link", "html": "<p><a href=\"https://a.b/c\" rel=\"nofollow noopener\">t</a></p>", "md": "[t](https://a.b/c)" },
+  { "name": "non-http href degrades to text", "html": "<p><a href=\"/relative/path\">r</a></p>", "md": "r" },
+  { "name": "mixed inline bold inside link", "html": "<p><a href=\"https://x.y\"><strong>bt</strong></a></p>", "md": "[**bt**](https://x.y)" },
+  { "name": "unordered list", "html": "<ul><li>x</li><li>y</li></ul>", "md": "- x\n- y" },
+  { "name": "ordered list numbering", "html": "<ol><li>a</li><li>b</li><li>c</li></ol>", "md": "1. a\n2. b\n3. c" },
+  { "name": "multi-block paragraphs", "html": "<p>one</p><p>two</p>", "md": "one\n\ntwo" },
+  { "name": "br inside block", "html": "<p>a<br>b</p>", "md": "a\nb" },
+  { "name": "unwhitelisted span stripped to text", "html": "<p>before<span style=\"color:red\" onclick=\"evil()\">mid</span>after</p>", "md": "beforemidafter" },
+  { "name": "paragraph followed by list", "html": "<p>intro</p><ul><li>a</li><li>b</li></ul>", "md": "intro\n\n- a\n- b" },
+  { "name": "empty root", "html": "", "md": "" },
+  { "name": "text-only root", "html": "just text", "md": "just text" }
+]

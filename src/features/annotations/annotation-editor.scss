@@ -1,0 +1,201 @@
+/* ==========================================================================
+   Annotation Editor (full-screen overlay over the captured image)
+   ========================================================================== */
+.vifee-annotation-editor {
+	position: fixed;
+	z-index: 2147483646;
+	inset: 0;
+	overflow: hidden;
+	background: rgba(15, 16, 19, 0.6);
+	user-select: none;
+}
+
+.vifee-annotation-editor__stage {
+	position: absolute;
+	inset: 0;
+	touch-action: none;
+}
+
+/* The bitmap-fitted surface: pointer coordinates, the base image and the
+   preview canvas all share this box, so gestures land exactly where they are
+   drawn regardless of the stage's aspect ratio. */
+.vifee-annotation-editor__surface {
+	position: absolute;
+	inset: 0;
+	margin: auto;
+	cursor: crosshair;
+	touch-action: none;
+}
+
+.vifee-annotation-editor__stage img,
+.vifee-annotation-editor__canvas {
+	position: absolute;
+	inset: 0;
+	margin: auto;
+	width: 100%;
+	height: 100%;
+	object-fit: contain;
+	pointer-events: none;
+}
+
+.vifee-annotation-editor__text {
+	position: absolute;
+	min-width: 140px;
+	padding: 4px 8px;
+	border: 1px solid var(--vifee-brand);
+	border-radius: var(--vifee-radius-xs);
+	background: rgba(255, 255, 255, 0.96);
+	font: inherit;
+	font-weight: 550;
+	box-shadow: var(--vifee-shadow-popover);
+}
+
+.vifee-annotation-editor__toolbar {
+	position: absolute;
+	top: 16px;
+	left: 50%;
+	display: flex;
+	max-width: calc(100vw - 16px);
+	padding: 5px 8px;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 4px;
+	transform: translateX(-50%);
+	border: 1px solid var(--vifee-line-medium);
+	border-radius: var(--vifee-radius-round);
+	background: rgba(255, 255, 255, 0.97);
+	backdrop-filter: blur(12px);
+	box-shadow: var(--vifee-shadow-floating);
+}
+
+.vifee-annotation-editor__group {
+	display: flex;
+	gap: 4px;
+	align-items: center;
+}
+
+.vifee-annotation-editor__group + .vifee-annotation-editor__group {
+	margin-left: 6px;
+	padding-left: 8px;
+	border-left: 1px solid var(--vifee-line-medium);
+}
+
+/* Shared 28×28 cell: tools, swatches and history buttons align on one row. */
+.vifee-annotation-editor__tool,
+.vifee-annotation-editor__cell {
+	display: flex;
+	width: 28px;
+	height: 28px;
+	padding: 0;
+	align-items: center;
+	justify-content: center;
+}
+
+.vifee-annotation-editor__tool {
+	border: 0;
+	border-radius: var(--vifee-radius-sm);
+	background: transparent;
+	color: var(--vifee-ink-700);
+	cursor: pointer;
+	font: inherit;
+	transition: background 120ms ease, color 120ms ease;
+}
+
+.vifee-annotation-editor__tool svg {
+	display: block;
+}
+
+.vifee-annotation-editor__tool:hover:not(:disabled) {
+	background: var(--vifee-surface-100);
+	color: var(--vifee-ink-900);
+}
+
+.vifee-annotation-editor__tool[aria-pressed="true"] {
+	background: var(--vifee-brand);
+	color: #fff;
+}
+
+.vifee-annotation-editor__tool:focus-visible {
+	outline: 2px solid var(--vifee-color-focus);
+	outline-offset: 2px;
+}
+
+.vifee-annotation-editor__tool:disabled {
+	cursor: not-allowed;
+	opacity: 0.45;
+}
+
+.vifee-annotation-editor__swatch {
+	width: 15px;
+	height: 15px;
+	padding: 0;
+	border: 0;
+	border-radius: 50%;
+	background: currentColor;
+	cursor: pointer;
+	box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.12);
+	transition: transform 120ms ease;
+}
+
+.vifee-annotation-editor__swatch:hover {
+	transform: scale(1.08);
+}
+
+.vifee-annotation-editor__swatch[aria-pressed="true"] {
+	outline: 2px solid var(--vifee-brand);
+	outline-offset: 1px;
+}
+
+.vifee-annotation-editor__swatch:focus-visible {
+	outline: 2px solid var(--vifee-color-focus);
+	outline-offset: 3px;
+}
+
+.vifee-annotation-editor__swatch:focus-visible[aria-pressed="true"] {
+	outline-color: var(--vifee-color-focus);
+}
+
+.vifee-annotation-editor__hint {
+	position: absolute;
+	bottom: 20px;
+	left: 50%;
+	max-width: calc(100vw - 32px);
+	padding: 8px 16px;
+	transform: translateX(-50%);
+	border: 1px solid var(--vifee-line-medium);
+	border-radius: var(--vifee-radius-round);
+	background: rgba(255, 255, 255, 0.92);
+	backdrop-filter: blur(8px);
+	color: var(--vifee-ink-700);
+	font-size: 12px;
+	font-weight: 550;
+	text-align: center;
+	box-shadow: var(--vifee-shadow-floating);
+	pointer-events: none;
+}
+
+.vifee-annotation-editor__hint--error {
+	border-color: #fecaca;
+	background: #fef2f2;
+	color: #dc2626;
+}
+
+.vifee-annotation-editor__actions {
+	position: absolute;
+	right: 16px;
+	bottom: 64px;
+	display: flex;
+	gap: 8px;
+}
+
+@media (max-width: 640px) {
+	.vifee-annotation-editor__toolbar {
+		top: 8px;
+		padding: 4px 6px;
+	}
+
+	.vifee-annotation-editor__actions {
+		right: 12px;
+		bottom: 68px;
+	}
+}

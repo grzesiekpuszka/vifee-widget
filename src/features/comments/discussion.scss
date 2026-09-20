@@ -1,0 +1,433 @@
+/* ==========================================================================
+   Vifee Discussion — Minimalist Threads, Popovers & Comment Workflow
+   ========================================================================== */
+
+.screen-reader-text {
+	position: absolute !important;
+	width: 1px;
+	height: 1px;
+	padding: 0;
+	margin: -1px;
+	overflow: hidden;
+	clip: rect(0, 0, 0, 0);
+	white-space: nowrap;
+	border: 0;
+}
+
+.vifee-avatar {
+	display: grid;
+	flex: 0 0 auto;
+	width: 28px;
+	height: 28px;
+	place-items: center;
+	border-radius: 50%;
+	background: var(--vifee-ink-800);
+	color: #ffffff;
+	font-size: 12px;
+	font-weight: 700;
+	letter-spacing: 0.02em;
+}
+
+/* ==========================================================================
+   Action Menu Dropdown
+   ========================================================================== */
+.vifee-action-menu {
+	position: relative;
+}
+
+.vifee-action-menu__panel {
+	position: absolute;
+	z-index: 20;
+	top: calc(100% + 4px);
+	right: 0;
+	display: grid;
+	width: 160px;
+	padding: 4px;
+	border: 1px solid var(--vifee-line-subtle);
+	border-radius: var(--vifee-radius-md);
+	background: #ffffff;
+	box-shadow: var(--vifee-shadow-floating);
+	animation: vifee-menu-in 120ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes vifee-menu-in {
+	from {
+		transform: scale(0.96) translateY(-4px);
+		opacity: 0;
+	}
+	to {
+		transform: scale(1) translateY(0);
+		opacity: 1;
+	}
+}
+
+.vifee-action-menu__panel button {
+	display: flex;
+	min-height: 32px;
+	gap: 8px;
+	align-items: center;
+	padding: 4px 8px;
+	border: 0;
+	border-radius: var(--vifee-radius-xs);
+	background: transparent;
+	color: var(--vifee-ink-700);
+	cursor: pointer;
+	font: inherit;
+	font-size: 12px;
+	font-weight: 500;
+	text-align: left;
+	transition: all 100ms ease;
+}
+
+.vifee-action-menu__panel button:hover {
+	background: var(--vifee-surface-100);
+	color: var(--vifee-ink-950);
+}
+
+.vifee-action-menu__panel button.is-danger {
+	color: #dc2626;
+}
+
+.vifee-action-menu__panel button.is-danger:hover {
+	background: #fef2f2;
+}
+
+/* ==========================================================================
+   Workflow Selects (Status & Priority Pills)
+   ========================================================================== */
+.vifee-workflow-select select {
+	width: 100%;
+	min-height: 28px;
+	padding: 2px 20px 2px 8px;
+	border: 1px solid var(--vifee-line-medium);
+	border-radius: var(--vifee-radius-round);
+	background: #ffffff;
+	color: var(--vifee-ink-800);
+	font: inherit;
+	font-size: 12px;
+	font-weight: 600;
+	cursor: pointer;
+	transition: border-color 120ms ease;
+}
+
+.vifee-workflow-select select:focus {
+	border-color: var(--vifee-brand);
+	outline: 0;
+}
+
+.vifee-workflow-select select:disabled {
+	opacity: 0.65;
+	cursor: default;
+}
+
+/* ==========================================================================
+   Reply Composer
+   ========================================================================== */
+.vifee-reply-composer {
+	display: grid;
+	overflow: hidden;
+	border: 1px solid var(--vifee-line-subtle);
+	border-radius: var(--vifee-radius-md);
+	background: #ffffff;
+	box-shadow: var(--vifee-shadow-sm);
+	transition: border-color 120ms ease, box-shadow 120ms ease;
+}
+
+.vifee-reply-composer:focus-within {
+	border-color: var(--vifee-brand);
+	box-shadow: 0 0 0 2px var(--vifee-brand-glow);
+}
+
+.vifee-reply-composer textarea {
+	width: 100%;
+	min-height: 60px;
+	padding: 8px 12px;
+	resize: vertical;
+	border: 0;
+	outline: 0;
+	background: transparent;
+	color: var(--vifee-ink-900);
+	font: inherit;
+	font-size: 12px;
+	line-height: 1.4;
+}
+
+.vifee-reply-composer__actions {
+	display: flex;
+	min-height: 36px;
+	align-items: center;
+	justify-content: space-between;
+	padding: 3px 8px;
+	border-top: 1px solid var(--vifee-line-subtle);
+	background: var(--vifee-surface-50);
+}
+
+.vifee-reply-composer__send {
+	background: transparent !important;
+	color: var(--vifee-ink-950) !important;
+	font-weight: 650 !important;
+	padding: 4px 12px !important;
+	min-height: 24px !important;
+	width: 24px;
+	border-radius: var(--vifee-radius-sm) !important;
+	font-size: 12px !important;
+	display: grid;
+	place-content: center;
+}
+
+.vifee-reply-composer__send:hover {
+	//background: var(--vifee-brand-hover) !important;
+}
+
+.vifee-screenshot-control.is-compact {
+	min-width: 0;
+}
+
+.vifee-screenshot-control.is-compact .vifee-screenshot-control__sources {
+	flex-wrap: nowrap;
+}
+
+.vifee-screenshot-control.is-compact ul {
+	margin-top: 4px;
+}
+
+/* ==========================================================================
+   Comment Popover (Minimalist Card)
+   ========================================================================== */
+.vifee-popover {
+	position: fixed;
+	z-index: 2147483599;
+	right: auto;
+	bottom: auto;
+	width: min(352px, calc(100vw - 24px));
+	max-height: calc(100vh - 32px);
+	padding: 16px 16px;
+	overflow-y: auto;
+	border: 1px solid var(--vifee-line-subtle);
+	border-top: 3px solid var(--vifee-brand);
+	border-radius: var(--vifee-radius-lg);
+	background: #ffffff;
+	box-shadow: var(--vifee-shadow-popover);
+	color: var(--vifee-ink-900);
+	animation: vifee-pop-in 160ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.vifee-popover.is-priority-urgent {
+	border-top-color: #ef4444;
+}
+
+.vifee-popover.is-priority-high {
+	border-top-color: #f97316;
+}
+
+.vifee-popover.is-priority-normal {
+	border-top-color: #0ea5e9;
+}
+
+.vifee-popover.is-priority-low {
+	border-top-color: #94a3b8;
+}
+
+.vifee-popover__header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding-bottom: 8px;
+	border-bottom: 1px solid var(--vifee-line-subtle);
+}
+
+.vifee-popover__badge {
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
+	font-weight: 750;
+	font-size: 12px;
+	color: var(--vifee-ink-950);
+}
+
+.vifee-popover.is-priority-urgent .vifee-popover__badge strong {
+	color: #dc2626;
+}
+
+.vifee-popover.is-priority-high .vifee-popover__badge strong {
+	color: #ea580c;
+}
+
+.vifee-popover.is-priority-normal .vifee-popover__badge strong {
+	color: #0284c7;
+}
+
+.vifee-popover.is-priority-low .vifee-popover__badge strong {
+	color: #64748b;
+}
+
+.vifee-popover__header-actions {
+	display: flex;
+	gap: 6px;
+	align-items: center;
+}
+
+.vifee-popover__details {
+	display: inline-flex;
+	min-height: 32px;
+	align-items: center;
+	gap: 6px;
+	padding: 4px 9px;
+	border: 1px solid var(--vifee-line-medium);
+	border-radius: var(--vifee-radius-sm);
+	background: #ffffff;
+	color: var(--vifee-ink-800);
+	font: inherit;
+	font-size: 12px;
+	font-weight: 600;
+	cursor: pointer;
+}
+
+.vifee-popover__details:hover {
+	border-color: var(--vifee-brand-border);
+	background: var(--vifee-brand-light);
+	color: var(--vifee-brand-active);
+}
+
+.vifee-popover__details:focus-visible {
+	outline: 2px solid var(--vifee-color-focus);
+	outline-offset: 2px;
+}
+
+.vifee-popover__details svg {
+	width: 14px;
+	height: 14px;
+}
+
+.vifee-popover__content {
+	margin: 16px 0;
+	font-size: 14px;
+	font-weight: 500;
+	line-height: 1.5;
+	color: var(--vifee-ink-900);
+	padding: 12px;
+	border-radius: var(--vifee-radius-md);
+	background: #f8f9fb;
+	border: 1px solid var(--vifee-line-subtle);
+}
+
+.vifee-popover .vifee-technical-info {
+	padding-bottom: 8px;
+	border-bottom: 1px solid var(--vifee-line-subtle);
+}
+
+.vifee-popover__footer {
+	display: grid;
+	grid-template-columns: 1fr auto;
+	gap: 8px;
+	align-items: center;
+	margin-top: 12px;
+	padding-top: 8px;
+	border-top: 1px solid var(--vifee-line-subtle);
+}
+
+.vifee-popover__footer > span {
+	color: var(--vifee-ink-600);
+	font-size: 12px;
+	font-weight: 550;
+	text-align: left;
+}
+
+/* ==========================================================================
+   Discussion Thread & Timeline
+   ========================================================================== */
+.vifee-thread {
+	display: grid;
+	gap: 12px;
+	max-height: none;
+	margin: 8px 0 0;
+	padding: 0;
+	overflow: visible;
+}
+
+.vifee-thread__replies {
+	display: grid;
+	gap: 16px;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+/* ==========================================================================
+   Chat Bubbles — every reply: a small avatar on the left, its bubble to the
+   right, author + timestamp below.
+   ========================================================================== */
+.vifee-chat-row {
+	display: flex;
+	gap: 8px;
+	align-items: flex-start;
+}
+
+.vifee-chat-bubble {
+	flex: 1 1 auto;
+	min-width: 0;
+	padding: 10px 14px;
+	border-radius: 16px;
+	background: var(--vifee-surface-50);
+	border: 1px solid var(--vifee-line-subtle);
+}
+
+.vifee-chat-bubble .vifee-md {
+	color: var(--vifee-ink-900);
+	font-weight: 400;
+}
+
+.vifee-chat-meta {
+	display: flex;
+	gap: 6px;
+	padding-left: 36px;
+	font-size: 12px;
+	color: var(--vifee-ink-600);
+}
+
+/* ==========================================================================
+   Technical Info Spec
+   ========================================================================== */
+.vifee-technical-info summary {
+	cursor: pointer;
+	color: var(--vifee-ink-600);
+	font-size: 12px;
+	font-weight: 600;
+	user-select: none;
+	transition: color 120ms ease;
+}
+
+.vifee-technical-info summary:hover {
+	color: var(--vifee-ink-900);
+}
+
+.vifee-technical-info dl {
+	display: grid;
+	gap: 3px;
+	margin: 8px 0 0;
+	padding: 8px 8px;
+	background: var(--vifee-surface-50);
+	border: 1px solid var(--vifee-line-subtle);
+	border-radius: var(--vifee-radius-xs);
+	font-size: 12px;
+}
+
+.vifee-technical-info dl div {
+	display: grid;
+	grid-template-columns: 72px minmax(0, 1fr);
+	gap: 8px;
+}
+
+.vifee-technical-info dt {
+	color: var(--vifee-ink-600);
+	font-weight: 550;
+}
+
+.vifee-technical-info dd {
+	min-width: 0;
+	margin: 0;
+	color: var(--vifee-ink-800);
+	font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+	font-size: 8px;
+	overflow-wrap: anywhere;
+}

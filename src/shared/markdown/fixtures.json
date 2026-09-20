@@ -1,0 +1,22 @@
+[
+  { "name": "bold **b**", "md": "**b**", "html": "<p><strong>b</strong></p>" },
+  { "name": "italic *i*", "md": "*i*", "html": "<p><em>i</em></p>" },
+  { "name": "inline code `c`", "md": "`c`", "html": "<p><code>c</code></p>" },
+  { "name": "fenced code block", "md": "```\nl1\nl2\n```", "html": "<pre><code>l1\nl2</code></pre>" },
+  { "name": "link https only", "md": "[t](https://a.b)", "html": "<p><a href=\"https://a.b\" rel=\"nofollow noopener\">t</a></p>" },
+  { "name": "unordered list groups consecutive items", "md": "- x\n- y", "html": "<ul><li>x</li><li>y</li></ul>" },
+  { "name": "ordered list groups consecutive items", "md": "1. x\n2. y", "html": "<ol><li>x</li><li>y</li></ol>" },
+  { "name": "multiline text becomes paragraph with br", "md": "a\nb", "html": "<p>a<br>b</p>" },
+  { "name": "script tag is escaped", "md": "<script>alert(1)</script>", "html": "<p>&lt;script&gt;alert(1)&lt;/script&gt;</p>" },
+  { "name": "javascript scheme link stays literal text", "md": "[x](javascript:alert(1))", "html": "<p>[x](javascript:alert(1))</p>" },
+  { "name": "data scheme link stays literal text", "md": "[x](data:text/html,x)", "html": "<p>[x](data:text/html,x)</p>" },
+  { "name": "html inside fenced block is escaped", "md": "```\n<img src=x onerror=alert(1)>\n```", "html": "<pre><code>&lt;img src=x onerror=alert(1)&gt;</code></pre>" },
+  { "name": "nested markers are single-pass (**bold *ital***)", "md": "**bold *ital***", "html": "<p>*<em>bold </em>ital***</p>" },
+  { "name": "link url containing a quote is rejected", "md": "[x](https://a.b/?q='x')", "html": "<p>[x](https://a.b/?q='x')</p>" },
+  { "name": "ampersand is escaped exactly once", "md": "a & b", "html": "<p>a &amp; b</p>" },
+  { "name": "unclosed fence degrades to plain text", "md": "```\nstill code", "html": "<p>```<br>still code</p>" },
+  { "name": "two fenced blocks split surrounding text", "md": "```\na\n```\nmid\n```\nb\n```", "html": "<pre><code>a</code></pre><p>mid</p><pre><code>b</code></pre>" },
+  { "name": "double quote in url survives escaping and still links", "md": "[x](https://a.b/?q=\"y\")", "html": "<p><a href=\"https://a.b/?q=&quot;y&quot;\" rel=\"nofollow noopener\">x</a></p>" },
+  { "name": "uppercase scheme stays literal text", "md": "[x](HTTPS://a.b/path)", "html": "<p>[x](HTTPS://a.b/path)</p>" },
+  { "name": "link url containing emphasis markers is not corrupted", "md": "[text](http://example.com/a**b**c)", "html": "<p><a href=\"http://example.com/a**b**c\" rel=\"nofollow noopener\">text</a></p>" }
+]
